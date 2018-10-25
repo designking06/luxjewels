@@ -72,7 +72,7 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
       <?php
       if(isset($_SESSION['shoppingcart'])){
       ?>
-      <table class="table-responsive w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
+      <table class=" w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
         <tbody>
           <tr class="w3-text-blue">
             <th>Name</th>
