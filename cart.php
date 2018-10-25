@@ -1,7 +1,6 @@
 <?php
-session_start();
+include_once('require.php');
 $product_ids = array();
-include_once('../includes/displayfunctions.php');
 if(isset($_POST['add_to_cart'])){
   //check if shopping cart has been started
   if(isset($_SESSION['shoppingcart'])){
@@ -46,9 +45,6 @@ if(isset($_POST['add_to_cart'])){
     );
   }
 }
-if(isset($_GET['action']) && $_GET['action'] == "empty"){
-  unset($_SESSION['shoppingcart']);
-}
 if(isset($_GET['action']) && $_GET['action'] == "update"){
   //track how many items are in shopping cart
   $count = count($_SESSION['shoppingcart']);
@@ -61,13 +57,16 @@ if(isset($_GET['action']) && $_GET['action'] == "update"){
   }
 }
 }
+if(isset($_GET['action']) && $_GET['action'] == "empty"){
+  unset($_SESSION['shoppingcart']);
+}
 ?>
-<HTML>
+<html>
 <?php
 getHead();
 getNav();
 ?>
-<BODY class="container-fluid w3-black">
+<body class="container-fluid w3-black">
 <div class="container w3-white">
   <div id="shopping-cart">
     <?php getCompInfo(7,'c2a23a');?>
@@ -81,35 +80,35 @@ getNav();
       <table class="tbl-responsive w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
         <tbody>
           <tr class="w3-text-blue">
-            <th>Product ID</th>
             <th>Name</th>
-            <th>Price</th>
-            <th>Desired Amount</th>
-            <th>Item Total</th>
+            <th class="text-right">Price</th>
+            <th class="text-center">Desired Amount</th>
+            <th class="text-right">Item Total</th>
+            <th class="text-right">Action</th>
           </tr>
         <?php
           $total = 0;
             foreach ($_SESSION["shoppingcart"] as $product){
               $item_total = $product["price"]*$product["quantity"];
         		?>
-        				<tr>
-        				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $product["id"]; ?></td>
-                        				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $product["name"]; ?></strong></td>
-                <td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$product["price"]; ?></td>
-        				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;">
+        		<tr>
+                <td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $product["name"]; ?></strong></td>
+                <td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".number_format($product["price"],2); ?></td>
+        				<td style="text-align:center;border-bottom:#F0F0F0 1px solid;">
                   <form method="post" action="cart.php?action=update&id=<?php echo $product["id"];?>">
                     <input type="text" name="updateQuantity" size="2" min="01" value="<?php echo $product["quantity"]; ?>" max="99" required>
                     <input type="submit" value="Update">
                   </form>
                 </td>
-                <td>$<?php echo $item_total;?></td>
-              </tr>
+                <td style="text-align:right;">$<?php echo number_format($item_total,2);?></td>
+                <td class="text-right"><a href="cart.php?action=remove&id=<?php echo $product["id"];?>"><button>Remove</button></a></td>
+            </tr>
               <?php
               $total = $total + $item_total;
               }?>
 
         <tr>
-        <td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$total; ?></td>
+        <td colspan="5" align=right><strong>Total:</strong> <?php echo "$".number_format($total,2); ?></td>
         </tr>
         </tbody>
       </table>
@@ -120,5 +119,16 @@ getNav();
       <a id="btnEmpty" href="cart.php?action=empty"><p>Empty Cart</p></a>
   </div>
 </div>
-</BODY>
-</HTML>
+</body>
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+</html>
