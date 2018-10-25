@@ -184,7 +184,7 @@ function displayProducts($CompID){
                             <div class="w3-modal-content">
                                 <div class="row w3-padding-64 w3-margin">
                                       <div class="col-sm-12 text-center"><h1 class="w3-margin"><?php echo $productname;?></h1></div>
-                                      <div class="col-sm-6 text-center">
+                                      <div class="col-sm-5 text-center w3-padding w3-margin">
                                           <img src="http://cagency.net/media/images/<?php echo $productimage;?>" class="w3-image" style="max-width:350px;">
                                       </div>
                                       <div class="col-sm-6 text-left">
@@ -251,11 +251,12 @@ function displayProductsWithDescription($CompID){
                                 <div class="col-sm-1"><p onclick="document.getElementById('Product<?php echo $productid;?>').style.display='none'" class="w3-text-red w3-margin">CLOSE</p></div>
                                 <div class="col-sm-6 text-center w3-padding">
                                     <h1 class="w3-margin"><?php echo $productname;?></h1>
-                                    <img src="http://cagency.net/media/images/<?php echo $productimage;?>" class="w3-image w3-margin" style="max-width:350px;">
-                                    <p><?php echo $productdescription;?></p>
-                                    <p class="lead">$<?php echo $productprice;?></p>
+                                    <img src="http://cagency.net/media/images/<?php echo $productimage;?>" class="w3-image w3-margin w3-padding w3-hide-medium" style="max-width:350px;">
                                 </div>
-                                <div class="col-sm-5"></div>
+                                <div class="col-sm-5">
+                                  <p><?php echo $productdescription;?></p>
+                                  <p class="lead">$<?php echo $productprice;?></p>
+                                </div>
                             </div>
                         </div>
                     </div>
