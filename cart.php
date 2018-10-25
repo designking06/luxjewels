@@ -1,5 +1,5 @@
 <?php
-include_once('require.php');
+include_once('includes/require.php');
 $product_ids = array();
 if(isset($_POST['add_to_cart'])){
   //check if shopping cart has been started
@@ -61,13 +61,8 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
   unset($_SESSION['shoppingcart']);
 }
 ?>
-<html>
-<?php
-getHead();
-getNav();
-?>
 <body class="container-fluid w3-black">
-<div class="container w3-white">
+<div class="container w3-white w3-padding-64">
   <div id="shopping-cart">
     <?php getCompInfo(7,'c2a23a');?>
     <div class=""><h2 style="color:#c2a23a;">Your Cart</h2>
@@ -118,6 +113,7 @@ getNav();
     </div>
       <a id="btnEmpty" href="cart.php?action=empty"><p>Empty Cart</p></a>
   </div>
+</div>
 </div>
 </body>
 <script>
