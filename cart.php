@@ -72,7 +72,7 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
       <?php
       if(isset($_SESSION['shoppingcart'])){
       ?>
-      <table class="tbl-responsive w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
+      <table class="table-responsive w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
         <tbody>
           <tr class="w3-text-blue">
             <th>Name</th>
@@ -82,6 +82,8 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
             <th class="text-right">Action</th>
           </tr>
         <?php
+          $orderDetails = "";
+          $i = 1;
           $total = 0;
             foreach ($_SESSION["shoppingcart"] as $product){
               $item_total = $product["price"]*$product["quantity"];
@@ -100,13 +102,53 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
             </tr>
               <?php
               $total = $total + $item_total;
+              $orderDetails .= "Item #".$i.": NAME: ".$product["name"]. ":: QTY: ".$product["quantity"]."|";
+              $i++;
               }?>
 
-        <tr>
-        <td colspan="5" align=right><strong>Total:</strong> <?php echo "$".number_format($total,2); ?></td>
+        <tr class="text-right">
+        <td></td><td></td><td></td><td colspan="5" align="right"><strong>Subotal:</strong> <?php echo "$".number_format($total,2); ?></td>
+        </tr>
+        <tr class="text-right">
+        <td></td><td></td><td></td><td colspan="5" align="right"><strong>Taxes:</strong>
+          <?php
+           $tax = $total * 0.075;
+           echo "$".number_format($tax,2);
+            ?>
+        </td>
+        </tr>
+        <tr class="text-right">
+        <td></td><td></td><td></td><td colspan="5" align="right"><strong>Total:</strong>
+          <?php
+          $grandtotal = $total + $tax;
+           echo "$".number_format($grandtotal,2); ?></td>
         </tr>
         </tbody>
       </table>
+      <div class="row w3-margin">
+          <div class="col-sm-12 text-left">Enter Your Payment Details</div>
+          <div class="col-sm-12 text-left"><?php echo $orderDetails;?></div>
+          <div class="col-sm-12">
+          <form action="charge.php" method="post" id="payment-form">
+              <div class="form-row">
+               <input type="text" name="first_name" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="First Name">
+               <input type="text" name="last_name" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Last Name">
+               <input type="email" name="email" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Email Address" required>
+                <div id="card-element" class="form-control w3-margin">
+                  <!-- a Stripe Element will be inserted here. -->
+                </div>
+                <input type="tel" name="tel" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Phone Number (optional)">
+                <input type="text" name="address" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Shipping Address" required>
+                <input type="hidden" name="amount" value="<?php echo $grandtotal;?>" required>
+                <input type="hidden" name="productDetails" value="<?php echo $orderDetails;?>" required>
+                <!-- Used to display form errors -->
+                <div id="card-errors" role="alert"></div>
+              </div>
+              <button class="btn w3-green">Finish Order</button>
+          </form>
+        </div>
+        </div>
+      </div>
         <?php
       }
       ?>
