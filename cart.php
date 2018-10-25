@@ -1,13 +1,6 @@
 <?php
 session_start();
 include_once('../includes/displayfunctions.php');
-try{
-  $pdo = new PDO('mysql:host=127.0.0.1;dbname=ccacms','root','');
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}catch(PDOException $e){
-  echo $e->getMessage();
-  die();
-}
 if(!empty($_GET["action"])) {
   switch($_GET["action"]) {
   	case "add":
