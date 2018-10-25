@@ -126,8 +126,7 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
         </tbody>
       </table>
       <div class="row w3-margin">
-          <div class="col-sm-12 text-left">Enter Your Payment Details</div>
-          <div class="col-sm-12 text-left"><?php echo $orderDetails;?></div>
+          <div class="col-sm-12 text-left"><h2>Enter Your Payment Details</h2></div>
           <div class="col-sm-12">
           <form action="charge.php" method="post" id="payment-form">
               <div class="form-row">
@@ -138,7 +137,18 @@ if(isset($_GET['action']) && $_GET['action'] == "empty"){
                   <!-- a Stripe Element will be inserted here. -->
                 </div>
                 <input type="tel" name="tel" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Phone Number (optional)">
-                <input type="text" name="address" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Shipping Address" required>
+                <input type="text" name="address" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="1234 Stree Rd." required>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <input type="text" name="city" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="City" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <input type="text" name="state" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="State (XX)" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <input type="text" name="zip" class="form-control mb-3 StripeElement StripeElement--empty" placeholder="Zip Code" required>
+                  </div>
+                </div>
                 <input type="hidden" name="amount" value="<?php echo $grandtotal;?>" required>
                 <input type="hidden" name="productDetails" value="<?php echo $orderDetails;?>" required>
                 <!-- Used to display form errors -->

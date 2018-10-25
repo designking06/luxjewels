@@ -54,8 +54,8 @@
 <div class="bgimg-1 w3-display-container" id="home">
   <div class="w3-display-middle" style="white-space:nowrap;">
     <div class="w3-black w3-padding">
-      <span class="w3-center w3-padding-large w3-xlarge w3-wide w3-animate-opacity w3-xxlarge w3-hide-small" style="color:#bf0600;">LUX JEWELS</span>
-      <span id="color" class="w3-center w3-padding-large w3-xlarge w3-wide w3-xxlarge w3-hide-large" style="color:#cca722;">LUX JEWELS</span>
+      <span class="w3-center w3-padding-large w3-xlarge w3-wide w3-animate-opacity w3-xxlarge w3-hide-small" style="color:#bf0600;">LUX JEWELS<span class="w3-hide-small"> CRYSTAL CREATIONS</span></span>
+      <span id="color" class="w3-center w3-padding-large w3-xlarge w3-wide w3-xxlarge w3-hide-large w3-hide-medium" style="color:#cca722;">LUX JEWELS</span>
     </div>
   </div>
 </div>
