@@ -1,63 +1,65 @@
 <?php
 session_start();
+$product_ids = array();
 include_once('../includes/displayfunctions.php');
-if(!empty($_GET["action"])) {
-  switch($_GET["action"]) {
-  	case "add":
-  		if(!empty($_POST["quantity"])) {
-        $stmt = "SELECT * FROM products WHERE ProductID = ? LIMIT 1";
-        $select = $pdo->prepare($stmt);
-        $select->execute([$_GET['code']]);
-        $count = $select->rowCount();
-        if($count > 0){
-          foreach($select as $row){
-          $productid = $row['ProductID'];
-          $productname = $row['ProductName'];
-          $productprice = $row['ProductPrice'];
-        			$itemArray = array($productid=>array('name'=>$productname, 'code'=>$productid, 'quantity'=>$_POST["quantity"], 'price'=>$productprice));
-
-        			if(!empty($_SESSION["cart_item"])) {
-        				if(in_array($productid,array_keys($_SESSION["cart_item"]))) {
-        					foreach($_SESSION["cart_item"] as $k => $v) {
-        							if($productid == $k) {
-        								if(empty($_SESSION["cart_item"][$k]["quantity"])) {
-        									$_SESSION["cart_item"][$k]["quantity"] = 0;
-        								}
-        								$_SESSION["cart_item"][$k]["quantity"] += $_POST["quantity"];
-        							}
-        					}
-        				} else {
-        					$_SESSION["cart_item"] = array_merge($_SESSION["cart_item"],$itemArray);
-        				}
-        			} else {
-        				$_SESSION["cart_item"] = $itemArray;
-        			}
-            }
-          }else{
-            //an error occurred grabbing id from server
-          }
-  		}
-  	break;
-  	case "remove":
-  		if(!empty($_SESSION["cart_item"])) {
-        if(in_array($_GET["code"],array_values($_SESSION["cart_item"] ) ) ){
-          $_SESSION["cart_item"][$_GET["code"]]["quantity"] = $_SESSION["cart_item"][$_GET["code"]]["quantity"] - $_POST["removeQuantity"];
-          if($_SESSION["cart_item"][$_GET["code"]]["quantity"] < 0){
-            $_SESSION["cart_item"][$_GET["code"]]["quantity"] == 0;
-          }
-            if($_SESSION["cart_item"][$_GET["code"]]["quantity"] == 0){
-              unset($_SESSION["cart_item"][$_GET["code"]]);
-              header('location:cart.php');
-            }
-        }else{
-          $alert = "not found in array";
+if(isset($_POST['add_to_cart'])){
+  //check if shopping cart has been started
+  if(isset($_SESSION['shoppingcart'])){
+    //track how many items are in shopping cart
+    $count = count($_SESSION['shoppingcart']);
+    //match up product_ids array keys with values from shopping cart ['id']
+    $product_ids = array_column($_SESSION['shoppingcart'],'id');
+    echo "<br>";
+    //check if the form submitted product id exists in the product_ids array
+    if(!in_array($_GET['id'],$product_ids)){
+      //product isnt inside array, add product to array
+      $_SESSION['shoppingcart'][$count] = array
+      (
+        'id' => $_GET['id'],
+        'name' => $_POST['productname'],
+        'price' => $_POST['productprice'],
+        'quantity' => $_POST['quantity']
+      );
+    }
+    else{
+      //product is already in cart, increase quantity
+      //loop thru product_ids array to find key value with form submitted product id
+        for($i = 0; $i < count($product_ids);$i++){
+        if($product_ids[$i] == $_GET['id']){
+          //once found, use $i to access product in cart and incrase quantity by submitted quantity
+          $_SESSION['shoppingcart'][$i]['quantity'] += $_POST['quantity'];
         }
-  		}
-  	break;
-  	case "empty":
-  		unset($_SESSION["cart_item"]);
-  	break;
+      }
+    }
+    //print_r($_SESSION['shoppingcart']);
   }
+  else{
+    //if shopping cart doesnt exist, create it with frist product having an array key of 0
+    //create array using submitted form data.
+    echo "in cart";
+    $_SESSION['shoppingcart'][0] = array
+    (
+      'id' => $_GET['id'],
+      'name' => $_POST['productname'],
+      'price' => $_POST['productprice'],
+      'quantity' => $_POST['quantity']
+    );
+  }
+}
+if(isset($_GET['action']) && $_GET['action'] == "empty"){
+  unset($_SESSION['shoppingcart']);
+}
+if(isset($_GET['action']) && $_GET['action'] == "update"){
+  //track how many items are in shopping cart
+  $count = count($_SESSION['shoppingcart']);
+  //match up product_ids array keys with values from shopping cart ['id']
+  $product_ids = array_column($_SESSION['shoppingcart'],'id');
+  for($i = 0; $i < count($product_ids);$i++){
+  if($product_ids[$i] == $_GET['id']){
+    //once found, use $i to access product in cart and incrase quantity by submitted quantity
+    $_SESSION['shoppingcart'][$i]['quantity'] = $_POST['updateQuantity'];
+  }
+}
 }
 ?>
 <HTML>
@@ -69,46 +71,45 @@ getNav();
 <div class="container w3-white">
   <div id="shopping-cart">
     <?php getCompInfo(7,'c2a23a');?>
-    <div class=""><h2>Your Cart</h2>
+    <div class=""><h2 style="color:#c2a23a;">Your Cart</h2>
         <a id="" href="viewproducts.php"><p>Shop For More</p></a>
     </div>
     <div class="text-center">
       <?php
-      var_dump($_SESSION["cart_item"]);
-      print_r(array($_SESSION["cart_item"]));
-      if(isset($_SESSION["cart_item"])){
-          $item_total = 0;
+      if(isset($_SESSION['shoppingcart'])){
       ?>
-      <table class="table-responsive w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
+      <table class="tbl-responsive w3-table-all w3-hoverable w3-text-black" cellpadding="10" cellspacing="1">
         <tbody>
-        <tr>
-        <th style="text-align:left;"><strong>Name</strong></th>
-        <th style="text-align:left;"><strong>Code</strong></th>
-        <th style="text-align:right;"><strong>Quantity</strong></th>
-        <th style="text-align:right;"><strong>Price</strong></th>
-        <th style="text-align:center;"><strong>Action</strong></th>
-        </tr>
+          <tr class="w3-text-blue">
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Desired Amount</th>
+            <th>Item Total</th>
+          </tr>
         <?php
-            foreach ($_SESSION["cart_item"] as $item){
+          $total = 0;
+            foreach ($_SESSION["shoppingcart"] as $product){
+              $item_total = $product["price"]*$product["quantity"];
         		?>
         				<tr>
-        				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $item["name"]; ?></strong></td>
-        				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["code"]; ?></td>
-        				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["quantity"]; ?></td>
-        				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$item["price"]; ?></td>
-        				<td style="text-align:center;border-bottom:#F0F0F0 1px solid;">
-                  <form method="post" action="cart.php?action=remove&code=<?php echo $item["code"];?>">
-                    <input type="text" name="removeQuantity" size="2" min="01" value="1" max="<?php echo $item["quantity"];?>" required>
-                    <input type="submit" value="Remove">Remove Item</a></td>
+        				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $product["id"]; ?></td>
+                        				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $product["name"]; ?></strong></td>
+                <td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$product["price"]; ?></td>
+        				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;">
+                  <form method="post" action="cart.php?action=update&id=<?php echo $product["id"];?>">
+                    <input type="text" name="updateQuantity" size="2" min="01" value="<?php echo $product["quantity"]; ?>" max="99" required>
+                    <input type="submit" value="Update">
                   </form>
-        				</tr>
-        				<?php
-                $item_total += ($item["price"]*$item["quantity"]);
-        		}
-        		?>
+                </td>
+                <td>$<?php echo $item_total;?></td>
+              </tr>
+              <?php
+              $total = $total + $item_total;
+              }?>
 
         <tr>
-        <td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$item_total; ?></td>
+        <td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$total; ?></td>
         </tr>
         </tbody>
       </table>
