@@ -1,4 +1,20 @@
-<?php include_once('includes/require.php');?>
+<?php
+ $path = $_SERVER['DOCUMENT_ROOT'];
+ include_once($path.'/includes/require.php');?>
+<?php
+//pick random background image
+$stmt = "SELECT ProductImage FROM products WHERE CompID = :CompID ORDER BY rand() LIMIT 1";
+$select = $pdo->prepare($stmt);
+$select ->bindParam(":CompID",$CompID);
+if($select->execute()){
+	foreach($select as $r){
+	$bgImage = $r['ProductImage'];
+	}
+}
+if(empty($bgImage)){
+	$bgImage = 'luxejewel.jpg';
+}
+?>
 <style>
   body, html {
       height: 100%;
@@ -16,21 +32,21 @@
 
   /* First image (Logo. Full height) */
   .bgimg-1 {
-      background-image: url('images/luxejewel.jpg');
+      background-image: url('https://cagency.net/media/images/luxejewel.jpg');
       min-height: 90%;
       background-position: bottom;
   }
 
   /* Second image (Portfolio) */
   .bgimg-2 {
-      background-image: url("images/luxejewel.jpg");
+      background-image: url("https://cagency.net/media/images/<?php echo $bgImage;?>");
       min-height: 400px;
-          background-position:bottom;
+          background-position:center;
   }
 
   /* Third image (Contact) */
   .bgimg-3 {
-      background-image: url("images/luxejewel.jpg");
+      background-image: url("https://cagency.net/media/images/luxejewel.jpg");
       min-height: 400px;
       background-position:bottom;
   }
@@ -45,7 +61,6 @@
       }
   }
   #color{
-    color:#cca722;
   }
 </style>
 <body>
@@ -54,15 +69,35 @@
 <div class="bgimg-1 w3-display-container" id="home">
   <div class="w3-display-middle" style="white-space:nowrap;">
     <div class="w3-black w3-padding">
-      <span class="w3-center w3-padding-large w3-xlarge w3-wide w3-animate-opacity w3-xxlarge w3-hide-small" style="color:#bf0600;">LUX JEWELS<span class="w3-hide-small"> CRYSTAL CREATIONS</span></span>
-      <span id="color" class="w3-center w3-padding-large w3-xlarge w3-wide w3-xxlarge w3-hide-large w3-hide-medium" style="color:#cca722;">LUX JEWELS</span>
+      <span class="w3-center w3-padding-large w3-xlarge w3-wide w3-animate-opacity w3-large w3-hide-small" style="color:#bf0600;">LUX JEWELS CRYSTAL CREATIONS</span>
+      <span id="color" class="w3-center w3-hide-large w3-hide-medium w3-large" style="color:#cca722;">LUX JEWELS CRYSTAL CREATIONS</span>
     </div>
   </div>
 </div>
 
 <!-- Container (About Section) -->
 <div class="w3-content w3-container w3-padding-64" id="about">
-  <p class=""><?php getCompInfo(7,'');?></p>
+  <div class="w3-xlarge" style="border-bottom:3px dashed #c2a23a;">
+	  <?php $c = getCompInfo($pdo,$CompID,'c2a23a');
+	  foreach($c as $c){
+		 ?>
+	  <div class="row"><div class="col-sm-12 text-center">
+          <h1 style="color:#c2a23a;"><?php echo $c['CompName'];?></h1>
+          <p><?php echo $c['CompDesc'];?></p>
+          </div>
+	  </div>
+	  <?php
+	  }
+	  ?>
+	  <div class="row">
+		  <div class="col-sm-12 text-center">
+		  <p onclick="window.location.href='https://luxjewelscrystalcreations.com/valentine/'" class="w3-green w3-padding">
+			<span class="w3-text-white">Shop</span><br>
+		  	<span class="w3-text-white">SPRING Collection</span>
+		  </p>
+		  </div>
+	  </div>
+	</div>
   <div class="w3-row">
     <!--div class="w3-col m w3-center w3-padding-large">
       <img src="images/luxejewel.jpg" class="w3-round w3-image w3-opacity w3-hover-opacity-off" alt="Photo of Me" width="500" height="333">
@@ -71,13 +106,13 @@
 </div>
 
 <div class="w3-row w3-center w3-padding-16" style="background-color:black;color:#c2a23a">
-  <div class="w3-third w3-section">
+  <div class="w3-third w3-section" onclick="window.location.href='viewproducts.php#Bracelets'">
     <span class="w3-xlarge">Bracelets</span>
   </div>
   <div class="w3-third w3-section">
-    <span class="w3-xlarge">Charms</span>
+    <span class="w3-xlarge">Earrings</span>
   </div>
-  <div class="w3-third w3-section">
+  <div class="w3-third w3-section" onclick="window.location.href='viewproducts.php#Necklaces'">
     <span class="w3-xlarge">Necklaces</span>
   </div>
 </div>
@@ -91,14 +126,15 @@
 
 <!-- Container (Portfolio Section) -->
 <div class="w3-content w3-container w3-padding-64" id="portfolio">
-  <h1 class="w3-center display-4" style="color:#bf0600;">Newest Products</h1>
-  <p class="w3-center lead w3-text-black w3-small">Click on the images to make them bigger</em></p><br>
+  <h1 class="w3-center display-4" style="color:#bf0600;">Featured Products</h1>
+  <p class="w3-center lead w3-text-black w3-small">Click on the images to make them bigger</p><br>
 
   <!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
   <div id="products">
-    <div class="row w3-padding"><div class="col-sm-12"><h2>Shop</h2><a href="viewproducts.php"><p>shop all</p></a></div></div>
+    <div class="row w3-padding"><div class="col-sm-12"><h2>Shop</h2><a href="viewproducts.php"><h4>shop all</h4></a></div></div>
     <!-- list products-->
-    <?php displayProducts(7);?>
+    <?php displayHome($CompID);?>
+    <div class="row w3-padding"><div class="col-sm-12"><a href="viewproducts.php"><h2>shop all</h2></a></div></div>
   </div>
 </div>
 
@@ -140,8 +176,8 @@
     <div class="w3-col m8 w3-panel">
       <div class="w3-large w3-margin-bottom">
         <i class="fa fa-map-marker fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i>Greensboro, NC<br>
-        <i class="fa fa-phone fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Phone: +00 151515<br>
-        <i class="fa fa-envelope fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Email: mail@mail.com<br>
+        <i class="fa fa-phone fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Phone: 929-215-0493<br>
+        <!--i class="fa fa-envelope fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Email: mail@mail.com<br-->
       </div>
     </div>
   </div>

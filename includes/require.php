@@ -1,10 +1,13 @@
 <?php
 session_start();
-include_once('connect/pdo.php');
-include_once('includes/displayfunctions.php');
+$path = $_SERVER['DOCUMENT_ROOT'];
+include_once($path.'/connect/pdo.php');
+include_once($path.'/includes/displayfunctions.php');
 getHead();
 getNav();
+$CompID = 6;
 ?>
+<script src="https://js.stripe.com/v3/"></script>
 <script>
 // Used to toggle the menu on small screens when clicking on the menu button
 function toggleFunction() {
